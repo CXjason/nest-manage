@@ -1,16 +1,16 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 15:15:11
- * @LastEditTime: 2024-11-18 15:41:26
+ * @LastEditTime: 2024-11-28 14:47:11
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\decorators\transform.decorators.ts
+ * @FilePath: \nest-manage\src\decorators\transform.decorators.ts
  *
  */
 
 import { Transform } from 'class-transformer';
 import { castArray } from 'lodash';
-import { parsePhoneNumber } from 'libphonenumber-js';
+import parsePhoneNumber from 'libphonenumber-js';
 
 export function ToArray(): PropertyDecorator {
   return Transform(
@@ -69,7 +69,9 @@ export function ToUpperCase(): PropertyDecorator {
   );
 }
 export function PhoneNumberSerializer(): PropertyDecorator {
-  return Transform((params) => parsePhoneNumber(params.value as string).number);
+  return Transform(
+    (params) => parsePhoneNumber((params.value ?? '') as string)?.number,
+  );
 }
 
 export function ToBoolean(): PropertyDecorator {

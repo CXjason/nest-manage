@@ -1,10 +1,10 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 17:48:28
- * @LastEditTime: 2024-11-22 15:10:38
+ * @LastEditTime: 2024-11-28 14:56:17
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\modules\auth\auth.module.ts
+ * @FilePath: \nest-manage\src\modules\auth\auth.module.ts
  *
  */
 import { forwardRef, Module } from '@nestjs/common';
@@ -14,6 +14,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { UserModule } from '../user/user.module';
+import { JwtStrategy } from './jwt.strategy';
+import { PublicStrategy } from './public.strategy';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { UserModule } from '../user/user.module';
         publicKey: configService.authConfig.privateKey,
         signOptions: {
           algorithm: 'RS256',
+          expiresIn: configService.authConfig.jwtExpirationTime,
         },
         verifyOptions: {
           algorithms: ['RS256'],
@@ -35,6 +38,7 @@ import { UserModule } from '../user/user.module';
   ],
 
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy, PublicStrategy],
+  exports: [JwtModule, AuthService],
 })
 export class AuthModule {}

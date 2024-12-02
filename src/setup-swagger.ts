@@ -1,18 +1,20 @@
 /*
  * @Author: jason
  * @Date: 2024-11-14 16:22:46
- * @LastEditTime: 2024-11-14 16:31:04
+ * @LastEditTime: 2024-12-02 08:36:12
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\setup-swagger.ts
+ * @FilePath: \nest-manage\src\setup-swagger.ts
  *
  */
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export function setupSwagger(app: INestApplication): void {
-  const documentBuilder = new DocumentBuilder().setTitle('api').setDescription(
-    `### REST
+  const documentBuilder = new DocumentBuilder()
+    .setTitle('接口文档')
+    .setDescription(
+      `### REST
 
 Routes is following REST standard (Richardson level 3)
 
@@ -54,7 +56,7 @@ Routes is following REST standard (Richardson level 3)
       - The **<user_id>** have no access to **<resource_id>**
 </p>
 </details>`,
-  );
+    );
 
   if (process.env.API_VERSION) {
     documentBuilder.setVersion(process.env.API_VERSION);

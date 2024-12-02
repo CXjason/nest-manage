@@ -1,15 +1,15 @@
 /*
  * @Author: jason
  * @Date: 2024-11-13 14:58:13
- * @LastEditTime: 2024-11-22 15:14:56
+ * @LastEditTime: 2024-12-02 11:50:32
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\app.module.ts
+ * @FilePath: \nest-manage\src\app.module.ts
  *
  */
+
+import './boilerplate.polyfill';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.modules';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -18,10 +18,21 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RolesModule } from './modules/roles/roles.module';
+import { ClsModule } from 'nestjs-cls';
+import { PermissionModule } from './modules/permission/permission.module';
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    RolesModule,
+    PermissionModule,
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -43,7 +54,7 @@ import { AuthModule } from './modules/auth/auth.module';
       },
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

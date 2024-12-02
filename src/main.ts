@@ -1,13 +1,13 @@
 /*
  * @Author: jason
  * @Date: 2024-11-13 14:58:13
- * @LastEditTime: 2024-11-15 15:01:37
+ * @LastEditTime: 2024-11-28 17:30:55
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\main.ts
+ * @FilePath: \nest-manage\src\main.ts
  *
  */
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { ExpressAdapter } from '@nestjs/platform-express';
@@ -18,6 +18,10 @@ import { SharedModule } from './shared/shared.modules';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { setupSwagger } from './setup-swagger';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { HttpExceptionFilter } from './filters/bad-request.filter';
+import { QueryFailedFilter } from './filters/query-failed.filter';
+import { ClassSerializerInterceptor } from '@nestjs/common';
+import { ResponseTransformInterceptor } from './interceptors/response-transform-interception';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -34,6 +38,19 @@ async function bootstrap() {
   app.use(compression());
   app.use(morgan('combined'));
   app.enableVersioning();
+  //app.useGlobalGuards();
+
+  const reflector = app.get(Reflector);
+
+  app.useGlobalFilters(
+    new HttpExceptionFilter(reflector),
+    new QueryFailedFilter(reflector),
+  );
+
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(reflector),
+    new ResponseTransformInterceptor(reflector),
+  );
 
   const configService = app.select(SharedModule).get(ApiConfigService);
 

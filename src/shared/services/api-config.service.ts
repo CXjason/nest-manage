@@ -105,7 +105,7 @@ export class ApiConfigService {
       database: this.getString('DB_DATABASE'),
       subscribers: [UserSubscriber],
       synchronize: this.isDevelopment,
-      logging: this.getBoolean('ENABLE_ORM_LOGS'),
+      //logging: this.getBoolean('ENABLE_ORM_LOGS'),
       //autoLoadEntities: this.isDevelopment,
     };
   }

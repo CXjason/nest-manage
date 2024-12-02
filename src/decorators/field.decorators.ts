@@ -1,10 +1,10 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:07:00
- * @LastEditTime: 2024-11-22 15:24:35
+ * @LastEditTime: 2024-12-02 09:57:07
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\decorators\field.decorators.ts
+ * @FilePath: \nest-manage\src\decorators\field.decorators.ts
  *
  */
 import { applyDecorators } from '@nestjs/common';
@@ -378,4 +378,14 @@ export function PasswordField(
   }
 
   return applyDecorators(...decorators);
+}
+
+export function NumberFieldOptional(
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> &
+    INumberFieldOptions = {},
+): PropertyDecorator {
+  return applyDecorators(
+    IsUndefinable(),
+    NumberField({ required: false, ...options }),
+  );
 }
