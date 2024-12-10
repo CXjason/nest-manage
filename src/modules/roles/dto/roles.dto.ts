@@ -8,17 +8,21 @@
  *
  */
 import { AbstractDto } from 'src/common/dto/absrract.dto';
-import { EnumFieldOptional, StringFieldOptional } from 'src/decorators';
+import {
+  EnumFieldOptional,
+  StringField,
+  StringFieldOptional,
+} from 'src/decorators';
 import { RolesStatus } from 'src/enum/roles-status.enum';
 import { RolesEntity } from '../roles.entity';
 
 export type RolesDtoOptions = Partial<{ isActive: boolean }>;
 
 export class RolesDto extends AbstractDto {
-  @StringFieldOptional({ nullable: true })
+  @StringField({ nullable: true })
   name!: string;
 
-  @StringFieldOptional({ nullable: true })
+  @StringField({ nullable: true })
   key!: string;
 
   @EnumFieldOptional(() => RolesStatus)

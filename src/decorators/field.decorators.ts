@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:07:00
- * @LastEditTime: 2024-12-02 09:57:07
+ * @LastEditTime: 2024-12-09 14:46:19
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\decorators\field.decorators.ts
@@ -40,6 +40,7 @@ import {
   ToUpperCase,
 } from './transform.decorators';
 import { Constructor } from 'src/types';
+import { IsArrayUuidField } from './array-field.decorator';
 
 interface IFieldOptions {
   each?: boolean;
@@ -64,6 +65,7 @@ interface INumberFieldOptions extends IFieldOptions {
 type IEnumFieldOptions = IFieldOptions;
 type IBooleanFieldOptions = IFieldOptions;
 type IClassFieldOptions = IFieldOptions;
+type IArrayUuidFieldOptions = IFieldOptions;
 export function DateField(
   options: Omit<ApiPropertyOptions, 'type'> & IFieldOptions = {},
 ): PropertyDecorator {
@@ -138,9 +140,11 @@ export function StringField(
     );
   }
 
-  const minLength = options.minLength || 1;
+  if (options?.minLength) {
+    const minLength = options.minLength || 1;
 
-  decorators.push(MinLength(minLength, { each: options.each }));
+    decorators.push(MinLength(minLength, { each: options.each }));
+  }
 
   if (options.maxLength) {
     decorators.push(MaxLength(options.maxLength, { each: options.each }));
@@ -282,6 +286,26 @@ export function BooleanField(
   if (options.swagger !== false) {
     decorators.push(
       ApiProperty({ type: Boolean, ...options } as ApiPropertyOptions),
+    );
+  }
+
+  return applyDecorators(...decorators);
+}
+
+export function ArrayUuidField(
+  options: Omit<ApiPropertyOptions, 'type'> & IArrayUuidFieldOptions = {},
+): PropertyDecorator {
+  const decorators = [IsArrayUuidField()];
+
+  if (options.nullable) {
+    decorators.push(IsNullable());
+  } else {
+    decorators.push(NotEquals(null));
+  }
+
+  if (options.swagger !== false) {
+    decorators.push(
+      ApiProperty({ type: Array, ...options } as ApiPropertyOptions),
     );
   }
 

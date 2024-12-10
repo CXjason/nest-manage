@@ -1,3 +1,12 @@
+/*
+ * @Author: jason
+ * @Date: 2024-11-13 14:58:13
+ * @LastEditTime: 2024-12-04 17:51:45
+ * @LastEditors: jason
+ * @Description: 
+ * @FilePath: \nest-manage\.eslintrc.js
+ * 
+ */
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -21,5 +30,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
 };

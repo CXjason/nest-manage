@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { UserEntity } from '../user/user.entity';
 import { TokenType } from 'src/constrants/tyken-type';
 import { RoleType } from 'src/constrants';
+import { RolesEntity } from '../roles/roles.entity';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -21,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(args: {
     userId: Uuid;
-    role: RoleType;
+    roles: RolesEntity;
     type: TokenType;
   }): Promise<UserEntity> {
     if (args.type !== TokenType.ACCESS_TOKEN) {
@@ -30,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const user = await this.userService.findOne({
       id: args.userId as never,
-      role: args.role,
+      roles: args.roles,
     });
 
     if (!user) {

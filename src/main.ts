@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-13 14:58:13
- * @LastEditTime: 2024-11-28 17:30:55
+ * @LastEditTime: 2024-12-09 17:19:17
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\main.ts
@@ -20,8 +20,14 @@ import { setupSwagger } from './setup-swagger';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { HttpExceptionFilter } from './filters/bad-request.filter';
 import { QueryFailedFilter } from './filters/query-failed.filter';
-import { ClassSerializerInterceptor } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  HttpStatus,
+  UnprocessableEntityException,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ResponseTransformInterceptor } from './interceptors/response-transform-interception';
+import { join } from 'path';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -40,6 +46,21 @@ async function bootstrap() {
   app.enableVersioning();
   //app.useGlobalGuards();
 
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // 或者指定特定的域名
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET,HEAD,PUT,PATCH,POST,DELETE',
+    );
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept',
+    );
+    next();
+  });
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+
   const reflector = app.get(Reflector);
 
   app.useGlobalFilters(
@@ -50,6 +71,20 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(reflector),
     new ResponseTransformInterceptor(reflector),
+  );
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      transform: true,
+      dismissDefaultMessages: true,
+      exceptionFactory: (errors) => {
+        console.log('ValidationPipe');
+        console.log(errors);
+        return new UnprocessableEntityException(errors);
+      },
+    }),
   );
 
   const configService = app.select(SharedModule).get(ApiConfigService);

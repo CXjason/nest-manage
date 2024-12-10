@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 17:50:05
- * @LastEditTime: 2024-11-29 08:32:59
+ * @LastEditTime: 2024-12-06 09:19:16
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\auth\auth.controller.ts
@@ -20,6 +20,8 @@ import { RoleType } from 'src/constrants';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { UserEntity } from '../user/user.entity';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { UserNotFoundException } from 'src/exceptions/user-not-found.exception';
 
 @Controller('auth')
 export class AuthController {
@@ -34,9 +36,15 @@ export class AuthController {
   ): Promise<LoginPayloadDto> {
     const userEntity = await this.authService.validateUser(userLoginDto);
 
+    if (!userEntity) {
+      throw new UserNotFoundException('用户名或密码错误');
+    }
+
+    console.log(userEntity);
+
     const token = await this.authService.createAccessToken({
       userId: userEntity.id,
-      role: userEntity.role,
+      roles: userEntity.roles.map((role) => role.key),
     });
 
     return new LoginPayloadDto(userEntity.toDto(), token);
@@ -68,5 +76,10 @@ export class AuthController {
   @Auth([RoleType.USER, RoleType.ADMIN], { public: true })
   getTest() {
     return 'getTest';
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }

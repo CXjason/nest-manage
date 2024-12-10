@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-23 16:59:46
- * @LastEditTime: 2024-12-02 17:39:52
+ * @LastEditTime: 2024-12-10 17:36:24
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\roles\roles.service.ts
@@ -17,6 +17,9 @@ import { RolesPageOptionsDto } from './dto/roles-page-options.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { RolesDto } from './dto/roles.dto';
 import { PermissionEntity } from '../permission/permission.entity';
+import { UpdateRolesPermissionDto } from './dto/update-roles-permission.dto';
+import { RolesUpdateDto } from './dto/roles-update.dto';
+import { BatchDeleteDto } from 'src/common/dto/batch-delete.dto';
 
 @Injectable()
 export class RolesService {
@@ -45,7 +48,14 @@ export class RolesService {
     await this.rolesRepository.remove(postEntity);
   }
 
-  async update(id, updateRolesDto: RolesCreateDto): Promise<void> {
+  async batchDelete(batchDeleteDto: BatchDeleteDto): Promise<void> {
+    const { ids } = batchDeleteDto;
+    console.log(ids);
+
+    await this.rolesRepository.delete(ids);
+  }
+
+  async update(id, updateRolesDto: RolesUpdateDto): Promise<void> {
     const queryBuilder = this.rolesRepository
       .createQueryBuilder('roles')
       .where('roles.id = :id', { id });
@@ -81,8 +91,15 @@ export class RolesService {
     const queryBuilder = this.rolesRepository.createQueryBuilder('roles');
     //console.log(queryBuilder);
 
+    const rolesCreateDto = new RolesCreateDto().toObject(rolesPageOptionsDto);
+    //console.log(rolesCreateDto);
+
+    queryBuilder.searchFieldString('roles', rolesCreateDto);
+
     const [items, pageMetaDto] =
       await queryBuilder.paginate(rolesPageOptionsDto);
+
+    //console.log(queryBuilder);
 
     // console.log(items);
     // console.log(pageMetaDto);
@@ -101,7 +118,12 @@ export class RolesService {
     return rolesEntity;
   }
 
-  async updateRolePermissions(id: Uuid, permissionIds: Uuid[]): Promise<void> {
+  async updateRolePermissions(
+    id: Uuid,
+    updateRolesPermissionDto: UpdateRolesPermissionDto,
+  ): Promise<void> {
+    const { permissionIds } = updateRolesPermissionDto;
+
     const queryBuilder = this.rolesRepository
       .createQueryBuilder('roles')
       .leftJoinAndSelect('roles.permissions', 'permissions')
@@ -113,15 +135,9 @@ export class RolesService {
       throw new RolesNotFoundException();
     }
 
-    console.log(permissionIds);
-    console.log(this.permissionsRepository);
-    const permissions = await this.permissionsRepository.find({
-      where: {
-        id: In(permissionIds),
-      },
+    const permissions = await this.permissionsRepository.findBy({
+      id: In(permissionIds),
     });
-
-    console.log(permissions);
 
     rolesEntity.permissions = permissions;
 

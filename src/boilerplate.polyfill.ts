@@ -10,7 +10,7 @@ import { PageDto } from './common/dto/page.dto';
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:27:51
- * @LastEditTime: 2024-12-02 10:05:06
+ * @LastEditTime: 2024-12-10 09:00:03
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\boilerplate.polyfill.ts
@@ -52,6 +52,14 @@ declare module 'typeorm' {
     searchByString(
       q: string,
       columnNames: string[],
+      options?: {
+        formStart: boolean;
+      },
+    ): this;
+
+    searchFieldString<T extends object>(
+      tableName: string,
+      columns: T,
       options?: {
         formStart: boolean;
       },
@@ -131,6 +139,29 @@ Array.prototype.toPageDto = function (
   return new PageDto(this.toDtos(options), pageMetaDto);
 };
 
+// 根据表中字段模糊搜索
+SelectQueryBuilder.prototype.searchFieldString = function (
+  tableName,
+  columns,
+  options,
+) {
+  this.andWhere(
+    new Brackets((qb) => {
+      for (const [key, value] of Object.entries(columns)) {
+        if (value || value === 0) {
+          qb.andWhere(`${tableName}.${key} LIKE :${key}`);
+          this.setParameter(
+            key,
+            options?.formStart ? `${value}%` : `%${value}%`,
+          );
+        }
+      }
+    }),
+  );
+
+  return this;
+};
+
 SelectQueryBuilder.prototype.searchByString = function (
   q,
   columnNames,
@@ -143,7 +174,8 @@ SelectQueryBuilder.prototype.searchByString = function (
   this.andWhere(
     new Brackets((qb) => {
       for (const item of columnNames) {
-        qb.orWhere(`${item} ILIKE :q`);
+        console.log(`${item} LIKE :q`);
+        qb.orWhere(`${item} LIKE :q`);
       }
     }),
   );
@@ -165,7 +197,9 @@ SelectQueryBuilder.prototype.paginate = async function (
   }>,
 ) {
   if (!options?.takeAll) {
-    this.skip(pageOptionsDto.skip).take(pageOptionsDto.take);
+    this.skip((pageOptionsDto.page - 1) * pageOptionsDto.take).take(
+      pageOptionsDto.take,
+    );
   }
 
   const entities = await this.getMany();

@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-12-02 11:47:55
- * @LastEditTime: 2024-12-02 15:59:30
+ * @LastEditTime: 2024-12-10 17:49:55
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\permission\permission.controller.ts
@@ -23,6 +23,7 @@ import { PermissionDto } from './dto/permission.dto';
 import { UUIDParam } from 'src/decorators/http.decorators';
 import { PermissionCreateDto } from './dto/permission-create.dto';
 import { PermissionUpdateDto } from './dto/permission-update.dto';
+import { BatchDeleteDto } from 'src/common/dto/batch-delete.dto';
 
 @Controller('permission')
 export class PermissionController {
@@ -51,6 +52,9 @@ export class PermissionController {
     @UUIDParam('id') id: Uuid,
     @Body() permissionUpdateDto: PermissionUpdateDto,
   ): Promise<void> {
+    // console.log('permissionUpdateDto');
+    // console.log(permissionUpdateDto);
+
     return this.permissionService.update(id, permissionUpdateDto);
   }
 
@@ -59,5 +63,10 @@ export class PermissionController {
     console.log(id);
 
     await this.permissionService.delete(id);
+  }
+
+  @Delete('/batch/delete')
+  async batchDelete(@Body() batchDeleteDto: BatchDeleteDto): Promise<void> {
+    await this.permissionService.batchDelete(batchDeleteDto);
   }
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-28 10:32:10
- * @LastEditTime: 2024-11-29 08:32:25
+ * @LastEditTime: 2024-12-05 16:15:02
  * @LastEditors: jason
  * @Description: 铺货参数错误
  * @FilePath: \nest-manage\src\filters\bad-request.filter.ts
@@ -30,6 +30,8 @@ export class HttpExceptionFilter
       statusCode: number;
       error: string;
     };
+
+    console.log('HttpExceptionFilter');
 
     const validationErrors = r.message;
 

@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-12-02 11:48:46
- * @LastEditTime: 2024-12-02 15:54:36
+ * @LastEditTime: 2024-12-10 17:56:39
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\permission\permission.service.ts
@@ -17,6 +17,7 @@ import { PageDto } from 'src/common/dto/page.dto';
 import { PermissionNotFoundException } from './exceptions/permission-not-found.exception';
 import { PermissionCreateDto } from './dto/permission-create.dto';
 import { PermissionUpdateDto } from './dto/permission-update.dto';
+import { BatchDeleteDto } from 'src/common/dto/batch-delete.dto';
 
 @Injectable()
 export class PermissionService {
@@ -30,6 +31,9 @@ export class PermissionService {
   ): Promise<PageDto<PermissionDto>> {
     const queryBuilder =
       this.permissionRepository.createQueryBuilder('permission');
+
+    const fields = new PermissionCreateDto().toObject(permissionPageOptionsDto);
+    await queryBuilder.searchFieldString('permission', fields);
 
     const [items, pageMetaDto] = await queryBuilder.paginate(
       permissionPageOptionsDto,
@@ -84,5 +88,12 @@ export class PermissionService {
     }
 
     await this.permissionRepository.remove(permissionEntity);
+  }
+
+  async batchDelete(batchDeleteDto: BatchDeleteDto): Promise<void> {
+    const { ids } = batchDeleteDto;
+    console.log(ids);
+
+    await this.permissionRepository.delete(ids);
   }
 }

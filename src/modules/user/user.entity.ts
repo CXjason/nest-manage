@@ -1,18 +1,18 @@
 /*
  * @Author: jason
  * @Date: 2024-11-15 16:13:29
- * @LastEditTime: 2024-11-22 15:34:16
+ * @LastEditTime: 2024-12-06 09:21:42
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\modules\user\user.entity.ts
+ * @FilePath: \nest-manage\src\modules\user\user.entity.ts
  *
  */
 import { AbstractEntity } from 'src/common/abstract.entity';
-import { Column, Entity, VirtualColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, VirtualColumn } from 'typeorm';
 import type { UserDtoOptions } from './dtos/user.dto';
 import { UserDto } from './dtos/user.dto';
-import { RoleType } from 'src/constrants/role-type';
 import { UseDto } from 'src/decorators';
+import { RolesEntity } from '../roles/roles.entity';
 
 @Entity({ name: 'users' })
 @UseDto(UserDto)
@@ -22,9 +22,6 @@ export class UserEntity extends AbstractEntity<UserDto, UserDtoOptions> {
 
   @Column({ nullable: true, type: 'varchar' })
   lastName!: string | null;
-
-  @Column({ type: 'enum', enum: RoleType, default: RoleType.USER })
-  role!: RoleType;
 
   @Column({ unique: true, nullable: true, type: 'varchar' })
   email!: string | null;
@@ -37,6 +34,12 @@ export class UserEntity extends AbstractEntity<UserDto, UserDtoOptions> {
 
   @Column({ nullable: true, type: 'varchar' })
   avatar!: string | null;
+
+  @ManyToMany(() => RolesEntity, (roles) => roles.users)
+  @JoinTable({
+    name: 'users_roles',
+  })
+  roles: RolesEntity[];
 
   @VirtualColumn({
     query: (alias) =>
