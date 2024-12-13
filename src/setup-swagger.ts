@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-14 16:22:46
- * @LastEditTime: 2024-12-02 08:36:12
+ * @LastEditTime: 2024-12-12 16:45:06
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\setup-swagger.ts
@@ -9,6 +9,7 @@
  */
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { knife4jSetup } from 'nest-knife4j';
 
 export function setupSwagger(app: INestApplication): void {
   const documentBuilder = new DocumentBuilder()
@@ -70,6 +71,14 @@ Routes is following REST standard (Richardson level 3)
       //persistAuthorization: true,
     },
   });
+  knife4jSetup(app, [
+    {
+      name: '2.X版本',
+      url: `/api-json`,
+      swaggerVersion: '2.0',
+      location: `/api-json`,
+    },
+  ]);
 
   console.log(
     `Documentation: http://localhost:${process.env.PORT}/${apiPrefix}`,

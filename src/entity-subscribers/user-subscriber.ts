@@ -1,10 +1,10 @@
 /*
  * @Author: jason
  * @Date: 2024-11-22 15:54:53
- * @LastEditTime: 2024-11-22 16:01:04
+ * @LastEditTime: 2024-12-11 17:47:15
  * @LastEditors: jason
  * @Description:
- * @FilePath: \nest-test\src\entity-subscribers\user-subscriber.ts
+ * @FilePath: \nest-manage\src\entity-subscribers\user-subscriber.ts
  *
  */
 import type {
@@ -32,7 +32,7 @@ export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
     // FIXME check event.databaseEntity.password
     const entity = event.entity as UserEntity;
 
-    if (entity.password !== event.databaseEntity.password) {
+    if (entity.password && entity.password !== event.databaseEntity.password) {
       entity.password = generateHash(entity.password!);
     }
   }

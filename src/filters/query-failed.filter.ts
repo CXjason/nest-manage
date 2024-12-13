@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-28 10:46:29
- * @LastEditTime: 2024-11-29 18:05:57
+ * @LastEditTime: 2024-12-12 16:47:07
  * @LastEditors: jason
  * @Description: 捕获数据库查询错误
  * @FilePath: \nest-manage\src\filters\query-failed.filter.ts
@@ -31,6 +31,7 @@ export class QueryFailedFilter implements ExceptionFilter<QueryFailedError> {
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
     console.log('QueryFailedError');
+    console.log(exception);
 
     response.status(status).json(
       responseMsg({

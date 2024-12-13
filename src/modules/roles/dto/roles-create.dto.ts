@@ -1,23 +1,20 @@
 import {
-  EnumFieldOptional,
   NumberFieldOptional,
   StringField,
   StringFieldOptional,
 } from 'src/decorators';
-import { RolesStatus } from 'src/enum/roles-status.enum';
-import { RolesDto } from './roles.dto';
 
 export class RolesCreateDto {
-  @StringField()
+  @StringField({ description: '名称', example: '管理员' })
   name!: string;
 
-  @StringField()
+  @StringField({ description: '标识', example: 'admin' })
   key!: string;
 
-  @NumberFieldOptional()
+  @NumberFieldOptional({ description: '状态', example: 1 })
   status?: number;
 
-  @StringFieldOptional()
+  @StringFieldOptional({ description: '描述', example: '管理员' })
   description?: string;
 
   // 新增方法：获取所有属性组成的对象

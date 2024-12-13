@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-26 11:01:24
- * @LastEditTime: 2024-11-26 15:05:54
+ * @LastEditTime: 2024-12-12 17:01:14
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\interceptors\auth-user-interceptor.service.ts

@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:07:00
- * @LastEditTime: 2024-12-09 14:46:19
+ * @LastEditTime: 2024-12-11 18:07:24
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\decorators\field.decorators.ts
@@ -29,6 +29,7 @@ import {
   Min,
   Max,
   IsPositive,
+  isPhoneNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ApiEnumProperty, ApiUUIDProperty } from './property.decorators';

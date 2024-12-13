@@ -1,3 +1,12 @@
+/*
+ * @Author: jason
+ * @Date: 2024-11-26 14:02:30
+ * @LastEditTime: 2024-12-12 17:34:01
+ * @LastEditors: jason
+ * @Description:
+ * @FilePath: \nest-manage\src\modules\auth\jwt.strategy.ts
+ *
+ */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -31,7 +40,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const user = await this.userService.findOne({
       id: args.userId as never,
-      roles: args.roles,
     });
 
     if (!user) {

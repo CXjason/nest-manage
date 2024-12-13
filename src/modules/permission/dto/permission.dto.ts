@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-12-02 14:18:26
- * @LastEditTime: 2024-12-10 17:40:36
+ * @LastEditTime: 2024-12-12 14:58:36
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\permission\dto\permission.dto.ts
@@ -19,16 +19,19 @@ import { RolesStatus } from 'src/enum/roles-status.enum';
 export type PermissionDtoOptions = Partial<{ isActive: boolean }>;
 
 export class PermissionDto extends AbstractDto {
-  @StringField({ nullable: true })
+  @StringField({ nullable: true, description: '名称', example: '新增' })
   name!: string;
 
-  @StringField({ nullable: true })
+  @StringField({ nullable: true, description: '标识', example: 'add' })
   key!: string;
 
-  @StringFieldOptional()
+  @StringFieldOptional({ description: '描述', example: '新增' })
   description?: string;
 
-  @EnumFieldOptional(() => RolesStatus)
+  @EnumFieldOptional(() => RolesStatus, {
+    description: '状态',
+    example: RolesStatus.ENABLE,
+  })
   status!: RolesStatus;
 
   constructor(permission: PermissionEntity, _options?: PermissionDtoOptions) {

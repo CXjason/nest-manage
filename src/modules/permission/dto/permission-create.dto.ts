@@ -7,23 +7,23 @@ import {
 /*
  * @Author: jason
  * @Date: 2024-12-02 15:26:24
- * @LastEditTime: 2024-12-10 17:55:04
+ * @LastEditTime: 2024-12-12 14:58:01
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\permission\dto\permission-create.dto.ts
  *
  */
 export class PermissionCreateDto {
-  @StringField()
+  @StringField({ description: '名称', example: '新增' })
   name!: string;
 
-  @StringField()
+  @StringField({ description: '标识', example: 'add' })
   key!: string;
 
-  @StringFieldOptional()
+  @StringFieldOptional({ description: '描述', example: '新增' })
   description?: string;
 
-  @NumberFieldOptional()
+  @NumberFieldOptional({ description: '状态', example: 1 })
   status?: number;
 
   toObject(obj) {

@@ -41,6 +41,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "mysql2": "^3.11.4",
+    "nest-knife4j": "^1.0.1",
     "nestjs-cls": "^4.4.1",
     "parse-duration": "^1.1.0",
     "passport": "^0.7.0",
