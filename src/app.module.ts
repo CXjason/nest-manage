@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-13 14:58:13
- * @LastEditTime: 2024-12-02 11:50:32
+ * @LastEditTime: 2024-12-17 11:25:50
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\app.module.ts
@@ -21,12 +21,16 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ClsModule } from 'nestjs-cls';
 import { PermissionModule } from './modules/permission/permission.module';
+import { ProjectModule } from './modules/project/project.module';
+import { WorktaskModule } from './modules/worktask/worktask.module';
 @Module({
   imports: [
     UserModule,
     AuthModule,
     RolesModule,
     PermissionModule,
+    ProjectModule,
+    WorktaskModule,
     ClsModule.forRoot({
       global: true,
       middleware: {

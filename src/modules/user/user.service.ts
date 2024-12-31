@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-15 16:09:47
- * @LastEditTime: 2024-12-12 17:39:04
+ * @LastEditTime: 2024-12-19 11:33:53
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\user\user.service.ts
@@ -65,7 +65,7 @@ export class UserService {
     return user;
   }
 
-  async getSingleUser(id: Uuid): Promise<UserEntity> {
+  async getSingleUser(id: Uuid): Promise<UserDto> {
     const queryBuilder = this.userRepository
       .createQueryBuilder('users')
       .leftJoinAndSelect('users.roles', 'roles')
@@ -77,7 +77,7 @@ export class UserService {
       throw new UserNotFoundException();
     }
 
-    return userEntity;
+    return userEntity.toDto();
   }
 
   async updateUser(id: Uuid, userUpdateDto: UserUpdateDto): Promise<void> {

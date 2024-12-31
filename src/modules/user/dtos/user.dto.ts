@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 15:09:51
- * @LastEditTime: 2024-12-12 17:00:25
+ * @LastEditTime: 2024-12-19 10:37:15
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\modules\user\dtos\user.dto.ts
@@ -61,5 +61,6 @@ export class UserDto extends AbstractDto {
     this.phone = user.phone;
     this.isActive = options?.isActive;
     this.roles = user.roles?.map((role) => new RolesDto(role)) || [];
+    this.username = `${this.firstName} ${this.lastName}`.trim();
   }
 }

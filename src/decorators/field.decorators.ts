@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:07:00
- * @LastEditTime: 2024-12-11 18:07:24
+ * @LastEditTime: 2024-12-17 15:45:01
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\decorators\field.decorators.ts
@@ -85,6 +85,15 @@ export function DateField(
   }
 
   return applyDecorators(...decorators);
+}
+
+export function DateFieldOptional(
+  options: Omit<ApiPropertyOptions, 'type' | 'required'> & IFieldOptions = {},
+): PropertyDecorator {
+  return applyDecorators(
+    IsUndefinable(),
+    DateField({ ...options, required: false }),
+  );
 }
 
 export function UUIDField(
@@ -412,5 +421,15 @@ export function NumberFieldOptional(
   return applyDecorators(
     IsUndefinable(),
     NumberField({ required: false, ...options }),
+  );
+}
+
+export function UUIDFieldOptional(
+  options: Omit<ApiPropertyOptions, 'type' | 'required' | 'isArray'> &
+    IFieldOptions = {},
+): PropertyDecorator {
+  return applyDecorators(
+    IsUndefinable(),
+    UUIDField({ required: false, ...options }),
   );
 }

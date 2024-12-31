@@ -7,15 +7,21 @@ import { KeyOfType } from './types';
 import { Brackets, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { LanguageCode } from './constrants/language-code';
 import { PageDto } from './common/dto/page.dto';
+import { OrderEnum } from './enum/order.enum';
 /*
  * @Author: jason
  * @Date: 2024-11-18 11:27:51
- * @LastEditTime: 2024-12-10 09:00:03
+ * @LastEditTime: 2024-12-23 16:17:59
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\boilerplate.polyfill.ts
  */
 export {};
+
+export type DateTimeRange = {
+  startDateTime: Date;
+  endDateTime: Date;
+};
 
 declare global {
   export type Uuid = string & { _uuidBrand: undefined };
@@ -57,12 +63,25 @@ declare module 'typeorm' {
       },
     ): this;
 
+    searchByDateTimeRange(
+      q: string,
+      column: string,
+      dateTimeRange: DateTimeRange,
+    ): this;
+
     searchFieldString<T extends object>(
       tableName: string,
       columns: T,
       options?: {
         formStart: boolean;
       },
+    ): this;
+
+    orderByField(tableName: string, fieldName: string, order: OrderEnum): this;
+
+    orderByFields(
+      tableName: string,
+      fields: { [key: string]: OrderEnum },
     ): this;
 
     paginate(
@@ -139,6 +158,39 @@ Array.prototype.toPageDto = function (
   return new PageDto(this.toDtos(options), pageMetaDto);
 };
 
+// 扩展 SelectQueryBuilder 原型  对该表的字段做排序
+SelectQueryBuilder.prototype.orderByFields = function (
+  tableName: string,
+  fields: { [key: string]: OrderEnum },
+) {
+  for (const [key, value] of Object.entries(fields)) {
+    if (value) {
+      this.orderByField(tableName, key, value);
+    }
+  }
+  return this;
+};
+// 扩展 SelectQueryBuilder 原型  对该表的某个字段做排序
+SelectQueryBuilder.prototype.orderByField = function (
+  tableName: string,
+  fieldName: string,
+  order: OrderEnum = OrderEnum.ASC,
+) {
+  if (!tableName || !fieldName) {
+    throw new Error('Table name and field name are required');
+  }
+
+  const alias = this.expressionMap.aliases.find(
+    (alias) => alias.metadata.tableName === tableName,
+  );
+  if (!alias) {
+    throw new Error(`Table alias for ${tableName} not found`);
+  }
+
+  this.addOrderBy(`${alias.name}.${fieldName}`, order);
+  return this;
+};
+
 // 根据表中字段模糊搜索
 SelectQueryBuilder.prototype.searchFieldString = function (
   tableName,
@@ -186,6 +238,18 @@ SelectQueryBuilder.prototype.searchByString = function (
     this.setParameter('q', `%${q}%`);
   }
 
+  return this;
+};
+
+SelectQueryBuilder.prototype.searchByDateTimeRange = function (
+  q,
+  column,
+  { startDateTime, endDateTime }: DateTimeRange,
+) {
+  this.andWhere(`${q}.${column} BETWEEN :startDateTime AND :endDateTime`, {
+    startDateTime,
+    endDateTime,
+  });
   return this;
 };
 

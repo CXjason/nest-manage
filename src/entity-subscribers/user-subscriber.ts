@@ -1,7 +1,7 @@
 /*
  * @Author: jason
  * @Date: 2024-11-22 15:54:53
- * @LastEditTime: 2024-12-11 17:47:15
+ * @LastEditTime: 2024-12-19 14:43:17
  * @LastEditors: jason
  * @Description:
  * @FilePath: \nest-manage\src\entity-subscribers\user-subscriber.ts
@@ -15,6 +15,7 @@ import type {
 import { EventSubscriber } from 'typeorm';
 import { UserEntity } from '../modules/user/user.entity';
 import { generateHash } from 'src/common/utils';
+import { QueryEvent } from 'typeorm/subscriber/event/QueryEvent';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<UserEntity> {
